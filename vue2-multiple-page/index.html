@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">基于vue2的多页面项目</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2017-05-15</span>
+  </div>
+  <div class="post-content">
+    <p>记一次用vue2开发多页面应用</p>
+<a id="more"></a>
+<h3 id="一-前提"><a href="#一-前提" class="headerlink" title="一.前提"></a>一.前提</h3><ul>
+<li>项目中有几个页面交互比较多，使用jquery方式实现，交互完成后，需要手动状态修改完成后，比较麻烦。选择使用mvvm模式的vue框架，以数据驱动可以加快开发效率。</li>
+<li>在此之前，使用vue写过spa应用，且使用官方vue-cli一键完成配置，对webpack不了解，这次尝试自己搭建脚手架。</li>
+</ul>
+<h3 id="二-实现"><a href="#二-实现" class="headerlink" title="二.实现"></a>二.实现</h3><h4 id="1-webpack配置"><a href="#1-webpack配置" class="headerlink" title="1.webpack配置"></a>1.webpack配置</h4><blockquote>
+<p><strong>webpack的plugin具有很强大的功能，也是webpack相对于其他前端编译grunt，glup具备的优势。可以通过webpack plugin实现热替换，代码压缩混淆，代码分离等工作，帮助我们更好的进行前端开发及优化。</strong></p>
+</blockquote>
+<ul>
+<li><strong>webpack plugin配置dev与production</strong></li>
+</ul>
+<blockquote>
+<p>在开发流程中，一般需要区分开发环境与生产环境。在开发环境中，进行本地调试开发，在生产环境编译打包文件。<br>以下，新建webpack.config.dev.js，与webpack.config.js文件分别作为开发环境与生产环境，在dev环境下实现热替换，在prod环境下实现多多页面输出。</p>
+<p><em>使用DefinePlugin区分定义环境</em></p>
+<p>在webpack.config.dev.js的plugin中添加</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">plugins: [</div><div class="line">      <span class="keyword">new</span> webpack.DefinePlugin(&#123;</div><div class="line">        <span class="string">'process.env.NODE_ENV'</span>: <span class="string">'"dev"'</span></div><div class="line">      &#125;),</div><div class="line">      ...</div><div class="line">]</div></pre></td></tr></table></figure>
+<blockquote>
+<p>在webpack.config.dev.js的plugin中添加</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">plugins: [</div><div class="line">      <span class="keyword">new</span> webpack.DefinePlugin(&#123;</div><div class="line">        <span class="string">'process.env.NODE_ENV'</span>: <span class="string">'"production"'</span></div><div class="line">      &#125;),</div><div class="line">      ...</div><div class="line">]</div></pre></td></tr></table></figure>
+<blockquote>
+<p><em>在package.json中添加钩子脚本</em></p>
+</blockquote>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">"scripts": &#123;</div><div class="line">    "dev": "webpack-dev-server --config webpack.config.dev.js",</div><div class="line">    "build": "webpack --config webpack.config.js"</div><div class="line">  &#125;,</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>多页面配置</strong></li>
+</ul>
+<p>在vue的spa应用中，单一入口，单一输出，webpack.config.js:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">    entry: [<span class="string">'./src/main.js'</span>], <span class="comment">//编译入口文件</span></div><div class="line">    output: &#123;</div><div class="line">        publicPath: config.publicPath, <span class="comment">//服务器的路径</span></div><div class="line">        path: path.resolve(__dirname + config.publicPath), <span class="comment">//编译到指定目录下</span></div><div class="line">        filename: <span class="string">'[name].js?v=[hash]'</span> <span class="comment">//编译后的文件名</span></div><div class="line">    &#125;,</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在多页面应用中，设置多入口，多出口，webpack.config.js:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> glob = <span class="built_in">require</span>(<span class="string">'glob'</span>);</div><div class="line"><span class="keyword">var</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"></div><div class="line"><span class="keyword">var</span> publicPath = <span class="string">"/dist/"</span>;</div><div class="line"><span class="keyword">var</span> entries = getEntry([<span class="string">'./src/views/*.js'</span>, <span class="string">'./src/views/**/*.js'</span>]); <span class="comment">// 获得入口js文件</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">	entry: entries,</div><div class="line">	output: &#123;</div><div class="line">     path: __dirname + publicPath,</div><div class="line">     publicPath: publicPath,</div><div class="line">     filename:  <span class="string">"[name].js"</span>,</div><div class="line">     libraryTarget: <span class="string">'umd'</span></div><div class="line"> &#125;,</div><div class="line"> ...</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 输出路径方法</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getEntry</span>(<span class="params">globPath</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> entries = &#123;&#125;,</div><div class="line">  basename, tmp, pathname;</div><div class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> (globPath) != <span class="string">"object"</span>) &#123;</div><div class="line">    globPath = [globPath]</div><div class="line">  &#125;</div><div class="line">  globPath.forEach(<span class="function">(<span class="params">itemPath</span>) =&gt;</span> &#123;</div><div class="line">      glob.sync(itemPath).forEach(<span class="function"><span class="keyword">function</span> (<span class="params">entry</span>) </span>&#123;</div><div class="line">        basename = path.basename(entry, path.extname(entry));</div><div class="line">        <span class="keyword">if</span> (entry.split(<span class="string">'/'</span>).length &gt; <span class="number">4</span>) &#123;</div><div class="line">          tmp = entry.split(<span class="string">'/'</span>).splice(<span class="number">-3</span>);</div><div class="line">          pathname = tmp.splice(<span class="number">0</span>, <span class="number">1</span>) + <span class="string">'/'</span> + basename; <span class="comment">// 正确输出js和html的路径</span></div><div class="line">          entries[pathname] = entry;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            entries[basename] = entry;</div><div class="line">        &#125;</div><div class="line">      &#125;);</div><div class="line">  &#125;);</div><div class="line">  <span class="comment">// entries['vendor'] = ['vue'];</span></div><div class="line">  <span class="keyword">return</span> entries;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>hot loaded配置</strong></li>
+</ul>
+<p>添加依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install webpack-dev-server --save-dev</div></pre></td></tr></table></figure>
+<p><em>webpack-dev-server</em>实现了一个轻量的node.js express服务器,webpack.config.dev.js配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">	devtool: <span class="string">"#eval-source-map"</span>,</div><div class="line">    devServer: &#123;</div><div class="line">        contentBase: <span class="string">"./src/public/"</span>,</div><div class="line">        colors: <span class="literal">true</span>,</div><div class="line">        historyApiFallback: <span class="literal">true</span>,</div><div class="line">        inline: <span class="literal">true</span>,</div><div class="line">        noInfo: <span class="literal">true</span></div><div class="line">    &#125;,</div><div class="line">    plugins: [</div><div class="line">   		<span class="keyword">new</span> webpack.HotModuleReplacementPlugin(),</div><div class="line">   		<span class="keyword">new</span> webpack.NoErrorsPlugin()</div><div class="line">  	]</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>其中contentBase属性为node服务指定的目录，访问本地资源及页面。</p>
+</blockquote>
+<h4 id="2-项目结构"><a href="#2-项目结构" class="headerlink" title="2.项目结构"></a>2.项目结构</h4><p><em>目录</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── README.md </div><div class="line">├── dist	// 输出文件夹</div><div class="line">│   ├── vendors.bundle.js 	// 分离后的通用js</div><div class="line">│   └── views	// 页面输出后的js文件</div><div class="line">├── node_modules // 依赖库</div><div class="line">├── package.json</div><div class="line">├── src  // 项目主要模块</div><div class="line">│   ├── common		// 通用js，ajax请求，及全局Vue插件</div><div class="line">│   ├── components	// vue components</div><div class="line">│   ├── public		// 资源文件及html模板</div><div class="line">│   └── views       // 主要模块</div><div class="line">│   	├── cart	// 购物车模块</div><div class="line">│	    ├── cart.js // vue的初始化</div><div class="line">│	    └── cart.vue</div><div class="line">		...</div><div class="line">├── stats.json </div><div class="line">├── webpack.config.dev.js // 测试环境</div><div class="line">└── webpack.config.js 	// 生产环境</div></pre></td></tr></table></figure>
+<p><em>src/public</em></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">src/public/		// 作为本地服务器指定的contentBase入口，访问本地资源及页面模板</div><div class="line">├── css</div><div class="line">├── display		// 本地调试的html模板</div><div class="line">├── font</div><div class="line">├── img</div><div class="line">└── js</div></pre></td></tr></table></figure>
+<h3 id="三-优化"><a href="#三-优化" class="headerlink" title="三.优化"></a>三.优化</h3><blockquote>
+<p>利用webpack plugin对代码压缩，提取分离</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">plugins: [</div><div class="line"></div><div class="line">      ...</div><div class="line"></div><div class="line">     <span class="keyword">new</span> webpack.optimize.CommonsChunkPlugin(<span class="string">'vendor'</span>, <span class="string">'vendors.bundle.js'</span>),</div><div class="line">     <span class="keyword">new</span> webpack.optimize.UglifyJsPlugin(&#123;</div><div class="line">        mangle: &#123;</div><div class="line">          except: [<span class="string">'$super'</span>, <span class="string">'$'</span>, <span class="string">'exports'</span>, <span class="string">'require'</span>]</div><div class="line">          <span class="comment">//以上变量‘$super’, ‘$’, ‘exports’ or ‘require’，不会被混淆</span></div><div class="line">        &#125;,</div><div class="line">        compress: &#123;</div><div class="line">          warnings: <span class="literal">false</span></div><div class="line">      &#125;</div><div class="line">    &#125;),</div><div class="line"> ]</div></pre></td></tr></table></figure>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>

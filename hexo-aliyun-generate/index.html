@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">hexo在阿里云的部署</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2017-09-18</span>
+  </div>
+  <div class="post-content">
+    <p>记一次hexo在阿里云的部署</p>
+<a id="more"></a>
+<blockquote>
+<p><strong>整个过程就是，hexo生成静态文件，同步到阿里云指定目录下。使用nginx做为服务，指向静态文件</strong></p>
+</blockquote>
+<h3 id="hexo"><a href="#hexo" class="headerlink" title="hexo"></a><a href="https://hexo.io/zh-cn/" target="_blank" rel="external">hexo</a></h3><p>hexo是node生成的静态blog，markdown为主要写作方式，其环境依赖node。通过npm安装全局cli，使用hexo-cli相关命令初始化blog，新建和管理文章。</p>
+<h4 id="step-one"><a href="#step-one" class="headerlink" title="step one"></a>step one</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// request</div><div class="line">- npm</div><div class="line">- node</div><div class="line"></div><div class="line">// hexo全局安装</div><div class="line"><span class="variable">$npm</span> install -g hexo-cli</div><div class="line"></div><div class="line">// 初始化</div><div class="line"><span class="variable">$hexo</span> init [blog-path/your-blog-name]</div><div class="line"><span class="variable">$cd</span> [your-blog-name]</div><div class="line"></div><div class="line">// 下载package.json下相关依赖</div><div class="line"><span class="variable">$npm</span> install</div></pre></td></tr></table></figure>
+<h4 id="step-two"><a href="#step-two" class="headerlink" title="step two"></a>step two</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">// 新建文章</div><div class="line"><span class="variable">$hexo</span> new [creating-article]</div><div class="line"></div><div class="line">// 使用node启动本地服务，预览</div><div class="line"><span class="variable">$hexo</span> server</div><div class="line"></div><div class="line">// 默认端口4000，Mac下打开默认浏览器，http://localhost:4000/</div><div class="line"><span class="variable">$open</span> http://localhost:4000/</div><div class="line"></div><div class="line">// 生成静态页面，即目录下的public文件夹</div><div class="line"><span class="variable">$hexo</span> generate</div><div class="line"></div><div class="line">// 通过git或ftp上传public文件夹到云服务</div><div class="line">ps:[搭建git服务器](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00137583770360579bc4b458f044ce7afed3df579123eca000)</div><div class="line">ps: 借助ftp client（Filezilla）上传，选择sftp协议</div></pre></td></tr></table></figure>
+<h4 id="step-three"><a href="#step-three" class="headerlink" title="step three"></a>step three</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">// 以centeros为例</div><div class="line">// 连接阿里云, 默认root@[ip]形式</div><div class="line"><span class="variable">$ssh</span> root@xxx.xxx.xxx.xxx</div><div class="line"></div><div class="line">// 密钥登录或阿里云密码登录</div><div class="line"></div><div class="line">// 通过yum安装nginx，检查nginx是否安装及版本, 启动nginx</div><div class="line"><span class="variable">$yum</span> nginx</div><div class="line"><span class="variable">$which</span> nginx</div><div class="line"><span class="variable">$nginx</span> -v</div><div class="line"><span class="variable">$nginx</span> start</div><div class="line"></div><div class="line">// 全局查找nginx配置目录</div><div class="line"><span class="variable">$find</span> / -name conf.d</div><div class="line"></div><div class="line">// 打开目录并新建配置文件</div><div class="line">---- begin xxx.conf ----</div><div class="line">server &#123;</div><div class="line">	listen	80;</div><div class="line">	<span class="comment"># 域名，及域名解析</span></div><div class="line">	server_name	[server-name];</div><div class="line">	<span class="comment"># 上步骤中的hexo静态文件上传到云服务指定的目录</span></div><div class="line">	root	[public-path];</div><div class="line"></div><div class="line">	<span class="comment"># 日志</span></div><div class="line">	error_log /var/www/html/blog/nginx_error.log;	</div><div class="line">	access_log  /var/www/html/blog/nginx_access.log;</div><div class="line"></div><div class="line">	index index.html;</div><div class="line">&#125;</div><div class="line">---- end xxx.conf ----</div><div class="line"></div><div class="line">// 检查nginx配置文件</div><div class="line"><span class="variable">$nginx</span> -t</div><div class="line"></div><div class="line">// 重启nginx服务</div><div class="line"><span class="variable">$nginx</span> -s reload</div><div class="line"></div><div class="line">// 打开本地浏览器，输入配置中的server_name</div></pre></td></tr></table></figure>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>

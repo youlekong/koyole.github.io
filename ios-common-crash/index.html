@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">iOS开发常见crash</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2015-08-10</span>
+  </div>
+  <div class="post-content">
+    <p>分析ios常见crash</p>
+<a id="more"></a>
+<h3 id="一-常见crash"><a href="#一-常见crash" class="headerlink" title="一.常见crash"></a>一.常见crash</h3><p>1.方法调用错误</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-[&lt;object&gt; &lt;selector&gt;]: unrecognized selector sent to instance <span class="number">0x1a12be490</span></div></pre></td></tr></table></figure>
+<p>2.僵尸引用，野指针</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">EXC_BAD_ACCESS</div></pre></td></tr></table></figure>
+<h3 id="二-runtime"><a href="#二-runtime" class="headerlink" title="二.runtime"></a>二.runtime</h3><p>消息调用错误导致<code>unrecognized selector sent to instance</code>crash，大多数原因是开发人员在编码过程中混淆对象类型，theReceiver无法识别theSelector，消息传递失败，且无法转发。</p>
+<p>消息机制</p>
+<ul>
+<li>objc_msgSend<br>oc在运行时，编译器会将消息转换为对消息函数 <code>id objc_msgSend(id theReceiver, SEL theSelector, ...)</code> 的调用，根据theReceiver类型，找到SEL对应的方法实现IMP，然后将隐藏参数self，<em>cmd以及指定的参数传递给方法实现 IMP，最后,将方法实现的返回值作为该函数的返回值返回，并且将方法缓存，以便下次调用。</em></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// class &amp; object</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">objc_class</span> &#123;</span></div><div class="line">    Class isa;</div><div class="line">    Class super_class                                        </div><div class="line">    ...                  </div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">objc_cache</span> *<span class="title">cache</span>      // 方法缓存                           </span></div><div class="line"><span class="class">    ...                    </span></div><div class="line"><span class="class">&#125; *<span class="title">Class</span></span></div><div class="line"><span class="class"><span class="title">typedef</span> <span class="title">struct</span> <span class="title">objc_object</span> &#123;</span></div><div class="line">    Class isa;</div><div class="line">&#125; *id;</div><div class="line"><span class="comment">// SEL</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">objc_selector</span>  *<span class="title">SEL</span>;</span>    </div><div class="line"><span class="comment">// IMP</span></div><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">id</span>    <span class="params">(*IMP)</span><span class="params">(id, SEL, ...)</span></span>; </div><div class="line"><span class="comment">// Method</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">objc_method</span> *<span class="title">Method</span>;</span></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">objc_</span> <span class="title">method</span> &#123;</span></div><div class="line">    SEL method_name;</div><div class="line">    <span class="keyword">char</span> *method_types;</div><div class="line">    IMP method_imp;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<ul>
+<li>动态方法决议</li>
+</ul>
+<p>如果在自身以及所有父类的方法列表中都没有找到对应的 IMP,进行动态方法决议,实现以下NSObject中方法，在其中为指定的 selector 􏰀供实现即可(调用运行时函数<code>class_addMethod</code>来添加，其中<a href="https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html" target="_blank" rel="external">Type Encoding</a>)，并返回YES表示不需要进行消息转发。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//NSObject:</span></div><div class="line">+ (<span class="built_in">BOOL</span>)resolveClassMethod:(SEL)name;</div><div class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)name;</div><div class="line"><span class="comment">// objc/runtime.h(objc-runtime-old.m)</span></div><div class="line"><span class="built_in">BOOL</span> class_addMethod(Class cls, SEL name, IMP imp, <span class="keyword">const</span> <span class="keyword">char</span> *types);</div></pre></td></tr></table></figure>
+<ul>
+<li>消息转发</li>
+</ul>
+<p>在动态方法决议实现并返回NO，则进行消息转发。新建一个消息接收类，实现<code>forwardingTargetForSelector</code>方法,把消息转给其他接收者来注册并返回该对象。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">id</span>) forwardingTargetForSelector:(SEL)selector;</div></pre></td></tr></table></figure>
+<p>当<code>forwardingTargetForSelector</code>返回nil，若不想程序crash，需要生成一个<code>methodSignature</code>变量来组装，这个变量包含了方法的参数类型、参数个数以及消息接收者等信息。接着把这个变量组装成一个NSInvocation对象进行最后一次的消息转发，调用接收者的<code>forwardInvocation:</code>来进行最后的挽救机会</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>) forwardInvocation:(<span class="built_in">NSInvocation</span> *)anInvocation;</div><div class="line">- (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)aSelector；</div></pre></td></tr></table></figure>
+<ul>
+<li>抛出异常<br>若对消息转发不对处理则抛出异常。</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)doesNotRecognizeSelector:(SEL)aSelector</div></pre></td></tr></table></figure>
+<p>三.内存管理<br>对象释放后未置为nil，调用方法抛出异常<code>EXC_BAD_ACCESS</code>。<br>1.属性关键字</p>
+<ul>
+<li>strong: 引用计数加1</li>
+<li>copy：在堆上分配空间，copy对象，用于集合对象，防止子类可变对象篡改值</li>
+<li>weak：对象销毁后置为nil</li>
+<li>assign：对象销毁后不置为nil，用于基本数据类型</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Test</span>()</span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSString</span> *strongStr;</div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *copyedStr;</div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line">@implement Test &#123;</div><div class="line">    - (<span class="keyword">void</span>)test &#123;</div><div class="line">        <span class="built_in">NSMutableString</span> *tempStr = [[<span class="built_in">NSMutableString</span> alloc] initWithString:<span class="string">@"abc"</span>];</div><div class="line">        <span class="keyword">self</span>.strongStr = tempStr;</div><div class="line">        <span class="keyword">self</span>.copyedStr = tempStr;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">"self.strongStr: %@, self.copyedStr: %@"</span>, <span class="keyword">self</span>.strongStr, <span class="keyword">self</span>.copyedStr);    <span class="comment">// abc abc</span></div><div class="line">        [tempStr appendString:<span class="string">"de"</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">"self.strongStr: %@, self.copyedStr: %@"</span>, <span class="keyword">self</span>.strongStr, <span class="keyword">self</span>.copyedStr);    <span class="comment">// abc abcde</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2.对象置空后发送消息返回nil，不会报错</p>
+<p>3.copy与mutableCopy</p>
+<ul>
+<li>非集合类对象</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">非集合类对象</th>
+<th style="text-align:center">复制</th>
+<th style="text-align:center">结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">immutable</td>
+<td style="text-align:center">copy</td>
+<td style="text-align:center">浅copy,immutable</td>
+</tr>
+<tr>
+<td style="text-align:center">immutable</td>
+<td style="text-align:center">mutableCopy</td>
+<td style="text-align:center">深copy,mutable</td>
+</tr>
+<tr>
+<td style="text-align:center">mutable</td>
+<td style="text-align:center">copy</td>
+<td style="text-align:center">深copy,immutable</td>
+</tr>
+<tr>
+<td style="text-align:center">mutable</td>
+<td style="text-align:center">mutableCopy</td>
+<td style="text-align:center">深copy,mutable</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>集合类对象</li>
+</ul>
+<p>集合类对象那个的单层拷贝与非集合类对象类似。<br>集合对象的深层拷贝方法：<br>1）集合的深复制有两种方法。可以用 <code>initWithArray:copyItems:</code> 将第二个参数设置为YES</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSDictionary</span> shallowCopyDict = [[<span class="built_in">NSDictionary</span> alloc] initWithDictionary:someDictionary copyItems:<span class="literal">YES</span>];</div></pre></td></tr></table></figure>
+<p>2) 归档解档</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSArray</span> *trueDeepCopyArray = [<span class="built_in">NSKeyedUnarchiver</span> unarchiveObjectWithData:[<span class="built_in">NSKeyedArchiver</span> archivedDataWithRootObject:oldArray]];</div></pre></td></tr></table></figure>
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>
