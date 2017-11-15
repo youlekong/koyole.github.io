@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">vue workflow</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2017-11-15</span>
+  </div>
+  <div class="post-content">
+    <p>参照网上的<a href="https://github.com/answershuto/learnVue" target="_blank" rel="external">vue源码分析</a>，简单的做个笔记</p>
+<a id="more"></a>
+<p>version: 2.3.x</p>
+<h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">vue-src</div><div class="line">├── compiler			# 编译，将DOM树编译为js函数</div><div class="line">├── core			# 核心模块，定义Vue构造函数及原型方法，Vue全局接口，virtual Dom</div><div class="line">├── platforms			# web和weex平台</div><div class="line">├── server			</div><div class="line">├── sfc				# 对(.vue)文件parse</div><div class="line">└── shared</div></pre></td></tr></table></figure>
+<h3 id="vue实例"><a href="#vue实例" class="headerlink" title="vue实例"></a>vue实例</h3><p>1.Vue构造方法中调用Vue.prototype_init()，在_init()方法中主要做两件是，</p>
+<ul>
+<li>通过$mount方法，compileToFunctions() -&gt; compile()，编译Dom。</li>
+<li>调用mountComponent(vm, updateComponent, noop)方法，初始化Watcher方法，加入Dep队列。通过Object.defineProperty重写getter，setter方法，在getter中收集Dep依赖，在setter通知watcher。</li>
+</ul>
+<p>2.数据发生改变时，setter中的dep.notify()响应，触发watcher.update()，异步的对视图更新，执行回调函数<em>_update(vm._render(), hydrating)</em>，在<em>_update</em>中<em><strong>patch</strong></em>方法对新旧节点diff更新。</p>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>
