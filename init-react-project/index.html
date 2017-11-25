@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">初始化React项目</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2017-11-25</span>
+  </div>
+  <div class="post-content">
+    <p>react + react-router + react-rudux + webpack</p>
+<a id="more"></a>
+<p>基本环境</p>
+<ul>
+<li>nodejs(npm)</li>
+</ul>
+<h3 id="一-初始化目录"><a href="#一-初始化目录" class="headerlink" title="一.初始化目录"></a>一.初始化目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$mkdir</span> react-webpack</div><div class="line"><span class="variable">$cd</span> react-webpack</div><div class="line"><span class="variable">$npm</span> init   <span class="comment">#生成package.json文件</span></div></pre></td></tr></table></figure>
+<h3 id="二-安装依赖包"><a href="#二-安装依赖包" class="headerlink" title="二.安装依赖包"></a>二.安装依赖包</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># react，react-dom是React核心包</span></div><div class="line"><span class="variable">$npm</span> i --save-dev react react-dom react-transform-hmr redbox-react react-transform-catch-errors</div><div class="line"><span class="comment"># 使用webpack做前端模块化工具</span></div><div class="line"><span class="variable">$npm</span> i --save-dev webpack webpack-dev-server </div><div class="line"><span class="comment"># babel转换es6语法</span></div><div class="line"><span class="variable">$npm</span> i --save-dev babel-core babel-loader babel-preset-react babel-preset-es2015 babel-plugin-react-transform </div><div class="line"><span class="comment"># 使用sass预编译css</span></div><div class="line"><span class="variable">$npm</span> i --save-dev css-loader style-loader sass-loader node-sass</div><div class="line"><span class="comment"># 使用axios做ajax请求</span></div><div class="line"><span class="variable">$npm</span> i --save-dev axios</div><div class="line"><span class="comment"># react-redux及其middleware</span></div><div class="line"><span class="variable">$npm</span> i --save-dev react-redux redux redux-logger redux-thunk</div><div class="line"><span class="comment"># react-router</span></div><div class="line"><span class="variable">$npm</span> i --save-dev react-router-dom</div></pre></td></tr></table></figure>
+<p>安装完成后package.json</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">"devDependencies": &#123;</div><div class="line">    "babel-core": "^6.26.0",</div><div class="line">    "babel-loader": "^7.1.2",</div><div class="line">    "babel-plugin-react-transform": "^3.0.0",</div><div class="line">    "babel-preset-es2015": "^6.24.1",</div><div class="line">    "babel-preset-react": "^6.24.1",</div><div class="line">    "css-loader": "^0.28.7",</div><div class="line">    "node-sass": "^4.6.1",</div><div class="line">    "react": "^16.1.1",</div><div class="line">    "react-dom": "^16.1.1",</div><div class="line">    "react-transform-catch-errors": "^1.0.2",</div><div class="line">    "react-transform-hmr": "^1.0.4",</div><div class="line">    "redbox-react": "^1.5.0",</div><div class="line">    "sass-loader": "^6.0.6",</div><div class="line">    "style-loader": "^0.19.0",</div><div class="line">    "url-loader": "^0.6.2",</div><div class="line">    "webpack": "^3.8.1",</div><div class="line">    "webpack-dev-server": "^2.9.4",</div><div class="line">    "axios": "^0.17.1",</div><div class="line">    "react-redux": "^5.0.6",</div><div class="line">    "react-router-dom": "^4.2.2",</div><div class="line">    "redux": "^3.7.2",</div><div class="line">    "redux-logger": "^3.0.6",</div><div class="line">    "redux-thunk": "^2.2.0"</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p><em>ps</em>：<strong>npm install axios@0.17.1</strong> 通过添加版本好安装指定版本</p>
+<h3 id="三-webpack配置"><a href="#三-webpack配置" class="headerlink" title="三.webpack配置"></a>三.webpack配置</h3><p>react+webpack配置与vue+webpack下的大同小异<br>根据不同版本查看官方文档配置需求，<a href="https://doc.webpack-china.org/" target="_blank" rel="external">webpack中文文档</a></p>
+<h4 id="0-基本配置"><a href="#0-基本配置" class="headerlink" title="0.基本配置"></a>0.基本配置</h4><p>核心模块：entry，output，module，plugin</p>
+<ul>
+<li>entry：构建spa或mpa应用时都需要一个或多个入口文件，以便webpack构建内部依赖</li>
+<li>output：构建完成后webpack的输出配置</li>
+<li>module：webpack自身只理解js文件。在构建过程中遇到不同的资源如图片，css等，需要通过不通的loader转换</li>
+<li>plugin：对资源的处理，如压缩文件，提取css文件</li>
+</ul>
+<p>文件webpack.config.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">    entry: path.resolve(__dirname, <span class="string">'./src/app.jsx'</span>),   <span class="comment">// 指定入口</span></div><div class="line">    output: &#123;</div><div class="line">        path: path.resolve(__dirname, <span class="string">'./build'</span>),       <span class="comment">// 指定出口</span></div><div class="line">        filename: <span class="string">'index.js'</span></div><div class="line">    &#125;,</div><div class="line">    <span class="built_in">module</span>: &#123;</div><div class="line">        loaders: [</div><div class="line">            &#123;</div><div class="line">                test: <span class="regexp">/\.(js|jsx)$/</span>,            <span class="comment">// jsx,js文件转换es6为es5loader</span></div><div class="line">                exclude: <span class="regexp">/node_modules/</span>,</div><div class="line">                loader: <span class="string">'babel-loader'</span></div><div class="line">            &#125;,</div><div class="line">            &#123;</div><div class="line">                test: <span class="regexp">/\.(less|css|scss)$/</span>,     <span class="comment">// 行内css，scss文件loader</span></div><div class="line">                loader: <span class="string">'style-loader!css-loader!sass-loader'</span></div><div class="line">            &#125;,</div><div class="line">            &#123;</div><div class="line">                test: <span class="regexp">/\.(png|jpg|jpeg)$/</span>,      <span class="comment">// 图片</span></div><div class="line">                use: &#123;</div><div class="line">                    loader: <span class="string">"url-loader"</span>,</div><div class="line">                    options: &#123;</div><div class="line">                        limit: <span class="number">8192</span></div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        ]</div><div class="line">    &#125;,</div><div class="line">    plugins: [</div><div class="line">        <span class="comment">// TODO</span></div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="1-开发环境配置"><a href="#1-开发环境配置" class="headerlink" title="1.开发环境配置"></a>1.开发环境配置</h4><p>webpack-dev-server是小型的nodejs服务器，用于本地开发测试</p>
+<ul>
+<li>热加载：自动检测文件更改，加载</li>
+<li>服务代理（proxy）：解决前后端分离时的跨域问题，本地服务器与前端同源，使用本地服务器代理实际后端</li>
+<li>本地资源服务（contentBase）：方便资源引用</li>
+</ul>
+<p>文件webpack.config.dev.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">devServer: &#123;</div><div class="line">        contentBase: [<span class="string">"./build"</span>, <span class="string">"./assets/"</span>],  <span class="comment">// contentBase中接受一个数组，指定不同的资源目录</span></div><div class="line">        historyApiFallback: <span class="literal">true</span>,</div><div class="line">        inline: <span class="literal">true</span>,</div><div class="line">        noInfo: <span class="literal">true</span>,</div><div class="line">        disableHostCheck: <span class="literal">true</span>,</div><div class="line">        port: <span class="number">4444</span>,</div><div class="line">        proxy: &#123;                        </div><div class="line">          <span class="string">"/api"</span>: &#123;</div><div class="line">            target: <span class="string">'http://xxx.xxx.xxx'</span>,       <span class="comment">// 代理目标服务器</span></div><div class="line">            secure: <span class="literal">false</span>,      </div><div class="line">            changeOrigin: <span class="literal">true</span>,</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div></pre></td></tr></table></figure>
+<h4 id="2-添加钩子函数"><a href="#2-添加钩子函数" class="headerlink" title="2.添加钩子函数"></a>2.添加钩子函数</h4><p>在package.json文件下添加生产，本地环境</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">"scripts": &#123;</div><div class="line">    "test": "echo \"Error: no test specified\" &amp;&amp; exit 1",</div><div class="line">    "build": "webpack",</div><div class="line">    "dev": "webpack-dev-server --config webpack.config.dev.js"</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 本地环境</span></div><div class="line"><span class="variable">$npm</span> run dev</div><div class="line"><span class="comment"># 生产环境</span></div><div class="line"><span class="variable">$npm</span> run build</div></pre></td></tr></table></figure>
+<h3 id="四-react相关"><a href="#四-react相关" class="headerlink" title="四.react相关"></a>四.react相关</h3><p><a href="http://www.css88.com/react/" target="_blank" rel="external">react中文文档</a><br><a href="http://reacttraining.cn/" target="_blank" rel="external">react-router中文文档</a><br><a href="http://cn.redux.js.org/" target="_blank" rel="external">react-redux中文文档</a></p>
+<p><em>ps</em>：使用时需要注意版本，不同版本下的api可能不同</p>
+<h4 id="1-react-router"><a href="#1-react-router" class="headerlink" title="1.react-router"></a>1.react-router</h4><h4 id="2-react-redux"><a href="#2-react-redux" class="headerlink" title="2.react-redux"></a>2.react-redux</h4>
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>
