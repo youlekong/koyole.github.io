@@ -76,7 +76,41 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 本地环境</span></div><div class="line"><span class="variable">$npm</span> run dev</div><div class="line"><span class="comment"># 生产环境</span></div><div class="line"><span class="variable">$npm</span> run build</div></pre></td></tr></table></figure>
 <h3 id="四-react相关"><a href="#四-react相关" class="headerlink" title="四.react相关"></a>四.react相关</h3><p><a href="http://www.css88.com/react/" target="_blank" rel="external">react中文文档</a><br><a href="http://reacttraining.cn/" target="_blank" rel="external">react-router中文文档</a><br><a href="http://cn.redux.js.org/" target="_blank" rel="external">react-redux中文文档</a></p>
 <p><em>ps</em>：使用时需要注意版本，不同版本下的api可能不同</p>
-<h4 id="1-react-router"><a href="#1-react-router" class="headerlink" title="1.react-router"></a>1.react-router</h4><h4 id="2-react-redux"><a href="#2-react-redux" class="headerlink" title="2.react-redux"></a>2.react-redux</h4>
+<h4 id="1-react-router"><a href="#1-react-router" class="headerlink" title="1.react-router"></a>1.react-router</h4><p>react-router4的使用与其他版本的不同</p>
+<p>文件route.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span></div><div class="line"><span class="keyword">import</span> &#123; </div><div class="line">    HashRouter <span class="keyword">as</span> Router, </div><div class="line">    Route, </div><div class="line">    Switch</div><div class="line">&#125; <span class="keyword">from</span> <span class="string">'react-router-dom'</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> Index <span class="keyword">from</span> <span class="string">'./view/index.jsx'</span></div><div class="line"><span class="keyword">import</span> Movie <span class="keyword">from</span> <span class="string">'./view/movie.jsx'</span></div><div class="line"><span class="keyword">import</span> MovieList <span class="keyword">from</span> <span class="string">'./view/movieList.jsx'</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">const</span> route = <span class="function"><span class="params">()</span> =&gt;</span> (</div><div class="line">    &lt;Router&gt;</div><div class="line">      &lt;Switch&gt;</div><div class="line">        &lt;Route exact path=<span class="string">"/"</span> component=&#123;Index&#125;/&gt;</div><div class="line">        &lt;Route path=<span class="string">"/movie/:movieId"</span> component=&#123;Movie&#125;/&gt;</div><div class="line">        &lt;Route path=<span class="string">'/movieList'</span> component=&#123;MovieList&#125;&gt;&lt;/Route&gt;</div><div class="line">      &lt;<span class="regexp">/Switch&gt;</span></div><div class="line"><span class="regexp">    &lt;/</span>Router&gt;</div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> route</div></pre></td></tr></table></figure>
+<p>Ⅰ.路由方式</p>
+<ul>
+<li>react-router有BrowserRouter，HashRouter，MemoryRouter，StaticRouter路由组件，其中BrowserRouter，HashRouter在浏览器中使用，实现前端路由功能。</li>
+<li>BrowserRouter基于url的location.pathname，HashRouter基于location.hash。</li>
+<li>在使用BrowserRouter搭建应用时，需要服务器对前端路由路径的修改，以防止跳转后页面再刷新出现404错误。</li>
+</ul>
+<p>Ⅱ.嵌套路由</p>
+<ul>
+<li>react-router4路由与其他版本的不同，router下只能有一个根节点。</li>
+</ul>
+<p>Ⅲ.js跳转</p>
+<ul>
+<li>this.props.history对象实现页面路由跳转</li>
+</ul>
+<h4 id="2-react-redux"><a href="#2-react-redux" class="headerlink" title="2.react-redux"></a>2.react-redux</h4><p>Ⅰ. 单一状态</p>
+<ul>
+<li>redux是在应用比较复杂情况下，对整个应用的数据及状态变化集中管理，因此在一个spa应用中应该有且只有一个store。</li>
+</ul>
+<p>Ⅱ. 单向数据流</p>
+<ul>
+<li>为了便于追踪数据状态的流动过程，redux使用单向数据流管理数据。</li>
+<li>对state的更新通过dispatch获取action对象，reducer对action的处理，state改变时通知component做re-render。</li>
+<li>在createStore是可以添加中间件</li>
+</ul>
+<p>Ⅲ. react-redux</p>
+<p>redux与React没有直接关系，需要通过react-redux结合react和redux。react-redux提供Provide与connect功能模块。</p>
+<ul>
+<li>Provider组件主要将属性(props)直接给子孙component，无须通过props层层传递，从而减少组件的依赖关系。</li>
+<li>connect方法的主要作用就是让Component与Store进行关联， Store的数据变化可以及时通知Views重新渲染。</li>
+</ul>
+<p>文件store.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> &#123; createStore, applyMiddleware &#125; <span class="keyword">from</span> <span class="string">'redux'</span></div><div class="line"><span class="keyword">import</span> thunkMiddleware <span class="keyword">from</span> <span class="string">'redux-thunk'</span></div><div class="line"><span class="keyword">import</span> logger <span class="keyword">from</span> <span class="string">'redux-logger'</span></div><div class="line"></div><div class="line"><span class="keyword">import</span> reducer <span class="keyword">from</span> <span class="string">'./reducer.js'</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//创建一个 Redux store 来以存放应用中所有的 state，应用中应有且仅有一个 store。</span></div><div class="line"><span class="keyword">var</span> store = createStore(</div><div class="line">    reducer,</div><div class="line">    applyMiddleware(       <span class="comment">// 应用中间件</span></div><div class="line">        thunkMiddleware, <span class="comment">// 允许我们 dispatch() 函数</span></div><div class="line">        logger</div><div class="line">    )</div><div class="line">);</div><div class="line"></div><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> store</div></pre></td></tr></table></figure>
   </div>
 </article>
     </main>
