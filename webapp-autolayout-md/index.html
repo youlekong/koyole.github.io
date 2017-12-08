@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">webapp自适应布局</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2017-12-08</span>
+  </div>
+  <div class="post-content">
+    <p>使用以rem为度量单位实现webapp自适应布局。</p>
+<a id="more"></a>
+<p>由于移动设备屏幕尺寸的多样性，在网页制作过程中在不同的尺寸的浏览器下字体的大小需要随着屏幕的尺寸的变化而变化。这里介绍的方法是根据不同的设备尺寸，使用rem为度量单位，动态的改变根节点的字体大小，达到不同设备下字体的适应。</p>
+<h3 id="一-rem"><a href="#一-rem" class="headerlink" title="一. rem"></a>一. rem</h3><p><strong>1.px，em，rem的不同</strong></p>
+<ul>
+<li>px：当用px设置字体时，页面缩放时无法自动改变字体大小</li>
+<li>em：相对于父视图的字体大小计算</li>
+<li>rem：相对于根元素的字体大小计算</li>
+</ul>
+<p><strong>2.px为单位</strong></p>
+<p>以px为单位，当在web浏览器中呈现合适的页面，在移动端打开时会发现字体的大小没有随着屏幕的缩小而减小，在不同尺寸的移动端屏幕下会呈现相同的字体大小。</p>
+<p><strong>3.em为单位</strong></p>
+<p>em是相对于父元素的字体大小计算的，举例：</p>
+<p><em>html片段：</em></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span>html片段</div><div class="line">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>html片段</div><div class="line">                <span class="tag">&lt;<span class="name">span</span>&gt;</span>html片段<span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>页面在不缩放的情况下100%，字体的默认16px（font-size：1em），为了方便换算设置body{font-size: 62.5%}，也就是10px=1em（实际情况下，chrome最小字体为12px）。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">body</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">62.5%</span>; <span class="comment">/* 1em = 10px */</span></div><div class="line">&#125;</div><div class="line"><span class="selector-tag">h1</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">1.4em</span>; <span class="comment">/* 14px */</span></div><div class="line">&#125;</div><div class="line"><span class="selector-tag">p</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">1.4em</span>; <span class="comment">/* 这里1em = 14px，所以1.4*14 = 19.6px */</span></div><div class="line">&#125;</div><div class="line"><span class="selector-tag">span</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">1.4em</span>; <span class="comment">/* 这里1em = 19.6px，所以1.4*19.6 = 27.44px */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到在每次给出元素字体的大小时总要考虑其父视图的字体大小，十分的不方便。<a href="http://pxtoem.com/" target="_blank" rel="external">em与px换算</a></p>
+<p><strong>4.rem为单位</strong></p>
+<p>rem是相对与根元素的font-size计算的，以上例子</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">html</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">16px</span>; </div><div class="line">&#125;</div><div class="line"><span class="selector-tag">h1</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">1.4rem</span>; <span class="comment">/* 16*1.4 = 22.4 */</span></div><div class="line">&#125;</div><div class="line"><span class="selector-tag">p</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">1.4rem</span>; <span class="comment">/* 16*1.4 = 22.4 */</span></div><div class="line">&#125;</div><div class="line"><span class="selector-tag">span</span> &#123;</div><div class="line">    <span class="attribute">font-size</span>: <span class="number">1.4rem</span>; <span class="comment">/* 16*1.4 = 22.4 */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>字体的大小相同，<a href="https://caniuse.com/#feat=rem" target="_blank" rel="external">rem兼容情况</a>。rem在IE下的兼容不足，但在webapp下使用还是没问题的，毕竟IE浏览器内核用在手机浏览器上的比较少。</p>
+<h3 id="二-viewport"><a href="#二-viewport" class="headerlink" title="二. viewport"></a>二. viewport</h3><p>通常在移动设备上显示网页，我们会在head中添加：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span>&gt;</span></div></pre></td></tr></table></figure>
+<h4 id="1-viewport概念"><a href="#1-viewport概念" class="headerlink" title="1.viewport概念"></a>1.viewport概念</h4><p>一般情况下，viewport为屏幕的可视区域。移动端下的viewport默认大于自身屏幕的宽度，用来兼容显示pc下的网页，因此在不做兼容的情况下，pc上的网页在移动设备打开，常见的是横向滚动条。在设置viewport后，设置content=”width=device-width”，网页宽度会与屏幕宽度相同，viewport等于自身屏幕的宽度。</p>
+<h4 id="2-像素"><a href="#2-像素" class="headerlink" title="2.像素"></a>2.像素</h4><p>通常情况下，即window.devicePixelRatio = 1时，css中的1px等于设备的1px。但随着手机的屏幕像素密度的提高，而手机实际像素远远大于物理屏幕的宽度高。iPhone3分辨率320x480，等于其物理尺寸，iPhon4的retina屏出来后，分辨率为分辨率640x980，window.devicePixelRatio = 2，css中的1px等于设备的2px；iPhone6+，window.devicePixelRatio = 3，css中的1px等于设备的3px。</p>
+<h4 id="3-动态的设置viewport"><a href="#3-动态的设置viewport" class="headerlink" title="3.动态的设置viewport"></a>3.动态的设置viewport</h4><p><em>主要方法</em></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> scale = <span class="number">1</span> / <span class="built_in">window</span>.devicePixelRatio,</div><div class="line">    content = <span class="string">'width=device-width, initial-scale='</span> + scale + <span class="string">', minimum-scale='</span> + scale + <span class="string">', maximum-scale='</span> + scale + <span class="string">', user-scalable=no'</span>;</div><div class="line"></div><div class="line"><span class="keyword">var</span> viewportEl = <span class="built_in">document</span>.querySelector(<span class="string">'meta[name="viewport"]'</span>)</div><div class="line"><span class="keyword">if</span> (viewportEl) &#123;</div><div class="line">    viewportEl.setAttribute(<span class="string">'content'</span>, content);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    viewportEl = <span class="built_in">document</span>.createElement(<span class="string">'meta'</span>);</div><div class="line">    viewportEl.setAttribute(<span class="string">'name'</span>, <span class="string">'viewport'</span>);</div><div class="line">    viewportEl.setAttribute(<span class="string">'content'</span>, content);</div><div class="line">    <span class="built_in">document</span>.head.appendChild(viewportEl);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">window</span>.addEventLister(<span class="string">'resize'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> innerWidth = <span class="built_in">document</span>.documentElement.getBoundingClientRect().width || <span class="built_in">window</span>.innerWidth;</div><div class="line">    <span class="built_in">document</span>.documentElement.style.fontSize = ( innerWidth*<span class="number">20</span>/<span class="number">320</span> ) + <span class="string">'px'</span>;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>参考：<a href="https://github.com/imochen/hotcss" target="_blank" rel="external">hotcss.js</a></p>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>
