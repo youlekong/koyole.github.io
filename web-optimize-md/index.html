@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <style>
+    html, body {
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+  <body>
+    <header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">一个web项目的简单优化</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2017-12-21</span>
+  </div>
+  <div class="post-content">
+    <p>优化站点：静态官网，由于租的阿里云的服务器配置低，带宽小，资源下载速度慢，打开网站需要的响应时间较长。<br>主要方式：浏览器展示的内容都需要从服务端下载，通过减少http请求次数和减少文件的体积，提高页面的响应速度。<br>测试工具：<a href="https://developers.google.com/speed/pagespeed/insights/" target="_blank" rel="external">Google pageSpeed</a>(访问需要线上地址，需要科学上网工具)</p>
+<a id="more"></a>
+<blockquote>
+<p><em>一个请求过程：浏览器提交URL，dns解析成ip地址，tcp连接，http请求，经过网关，服务器返回资源，前端处理。</em></p>
+</blockquote>
+<p>这里主要提到的是浏览器缓存和前端资源的优化。</p>
+<h3 id="一-浏览器缓存"><a href="#一-浏览器缓存" class="headerlink" title="一.浏览器缓存"></a>一.浏览器缓存</h3><p>主要是HTTP协议定义的缓存机制，当页面资源被缓存后，页面再次请求资源时，会先从缓存获取资源，缓存不存在再从服务器获取。</p>
+<h4 id="1-浏览器缓存机制"><a href="#1-浏览器缓存机制" class="headerlink" title="1.浏览器缓存机制"></a>1.浏览器缓存机制</h4><p>缓存状态会表现在http协议的header中，header中常见的有四种：</p>
+<ul>
+<li>Expires</li>
+<li>Cache-Control</li>
+<li>Last-modified(if-modified-since)</li>
+<li>Etag(if-none-match)</li>
+</ul>
+<p><em>ps：<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers" target="_blank" rel="external">MDN http headr</a></em></p>
+<p>1.Expires</p>
+<p>Expires头是HTTP1.0中定义的，指定了一个日期/时间，这是一个绝对时间，在Response中显示，在这个日期/时间之后，HTTP响应被认为是过时的。当请求头中存在cache-control时，忽略expires</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="section">#语法：</span></div><div class="line">Expires: &lt;http-date&gt; # http-date是一个HTTP-date时间戳</div><div class="line"><span class="section">#示例：</span></div><div class="line">Expires: Wed, 21 Oct 2015 07:28:00 GMT</div></pre></td></tr></table></figure>
+<p>2.Cache-Controle</p>
+<p>Cache-Control头是HTTP1.1中定义的，(general header)通用首部，即可应用与Request也可应用与Response，通过指定指令来实现缓存机制。缓存指令是单向的, 这意味着在请求设置的指令，在响应中不一定包含相同的指令。</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="section">#语法：</span></div><div class="line"><span class="section">## 请求</span></div><div class="line">Cache-Control: max-age=&lt;seconds&gt;</div><div class="line">Cache-Control: max-stale[=&lt;seconds&gt;]</div><div class="line">Cache-Control: min-fresh=&lt;seconds&gt;</div><div class="line">Cache-control: no-cache </div><div class="line">Cache-control: no-store</div><div class="line">Cache-control: no-transform</div><div class="line">Cache-control: only-if-cached</div><div class="line"><span class="section">## 响应</span></div><div class="line">Cache-control: must-revalidate</div><div class="line">Cache-control: no-cache</div><div class="line">Cache-control: no-store</div><div class="line">Cache-control: no-transform</div><div class="line">Cache-control: public</div><div class="line">Cache-control: private</div><div class="line">Cache-control: proxy-revalidate</div><div class="line">Cache-Control: max-age=&lt;seconds&gt;</div><div class="line">Cache-control: s-maxage=&lt;seconds&gt;</div><div class="line"></div><div class="line">示例：</div><div class="line">Cache-control: 3600;</div></pre></td></tr></table></figure>
+<p>3.Last-modified(if-[un]modified-since)</p>
+<p>Last-Modified是一个header Response，其中包含源头服务器认定的资源做出修改的日期及时间。它通常被用作一个验证器来判断接收到的或者存储的资源是否彼此一致。由于精确度比ETag要低，所以这是一个备用机制。当header Request包含有If-Modified-Since或If-Unmodified-Since条件时，会在响应中使用这个字段。</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">语法：</div><div class="line">Last-Modified: &lt;day-name&gt;, &lt;day&gt; &lt;month&gt; &lt;year&gt; &lt;hour&gt;:&lt;minute&gt;:&lt;second&gt; GMT</div><div class="line">示例：</div><div class="line">Last-Modified: Wed, 21 Oct 2015 07:28:00 GMT</div></pre></td></tr></table></figure>
+<p>4.Etag(if[-none]-match)</p>
+<p>ETag是一个header Response，是资源的特定版本的标识符。这可以让缓存更高效，并节省带宽，因为如果内容过期但内容没有改变，Web服务器不需要发送完整的响应。而如果内容发生了变化，使用ETag有助于防止资源的同时更新相互覆盖（“<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Etag" target="_blank" rel="external">空中碰撞</a>”）。</p>
+<p>如果给定URL中的资源更改，则一定要生成新的Etag值。 因此Etags类似于指纹，也可能被某些服务器用于跟踪。 比较etags能快速确定此资源是否变化，但也可能被跟踪服务器永久存留。</p>
+<figure class="highlight md"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">语法：</div><div class="line">ETag: W/"&lt;etag_value&gt;"</div><div class="line">ETag: "&lt;etag_value&gt;"</div><div class="line">示例：</div><div class="line">ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"</div><div class="line">ETag: W/"0815"</div></pre></td></tr></table></figure>
+<h4 id="2-nginx实现"><a href="#2-nginx实现" class="headerlink" title="2.nginx实现"></a>2.nginx实现</h4><p>1.配置缓存</p>
+<p>在nginx中匹配相应的资源，通过expires字段添加缓存时间</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$ &#123;</div><div class="line">                expires 30d;</div><div class="line">&#125;</div><div class="line">location ~ .*\.(js|css)?$ &#123;</div><div class="line">                expires 1h;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2.配置gzip</p>
+<p>开启gzip，gzip(GNU-ZIP)是一种压缩技术，服务器端压缩，传到浏览器后浏览器解压并解析，减小传输体积，提高传输速度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">## `gzip` Settings</div><div class="line">gzip on;</div><div class="line">gzip_disable &quot;msie6&quot;;</div><div class="line"></div><div class="line">gzip_vary on;</div><div class="line">gzip_proxied any;</div><div class="line">gzip_comp_level 6;</div><div class="line">gzip_http_version 1.1;</div><div class="line">gzip_min_length 256;</div><div class="line">gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;</div></pre></td></tr></table></figure>
+<h3 id="二-前端构建工具"><a href="#二-前端构建工具" class="headerlink" title="二.前端构建工具"></a>二.前端构建工具</h3><h4 id="1-gulp"><a href="#1-gulp" class="headerlink" title="1.gulp"></a>1.gulp</h4><p>尝试选用gulp前端构建工具构建项目。相比于webpack的完整强大，gulp相对小巧。</p>
+<p>准备：</p>
+<ul>
+<li>node</li>
+<li>npm</li>
+</ul>
+<p>安装：</p>
+<ul>
+<li>全局安装gulp</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install --global gulp</div></pre></td></tr></table></figure>
+<ul>
+<li>添加项目依赖</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd /path/your/project</div><div class="line">$ npm install --save-dev gulp #生成pageage.json文件</div></pre></td></tr></table></figure>
+<ul>
+<li>创建gulpfile.js文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ touch gulpfile.js</div></pre></td></tr></table></figure>
+<p>开发：</p>
+<p>gulp以链式方式编程，通过pipe函数连接，从源目录，中途经过插件处理生成处理后文件存放到目标目录。例：</p>
+<ul>
+<li>gulp.task(name[, deps], fn)</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 格式</span></div><div class="line">gulp.task(<span class="string">'sth'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> gulp.src(<span class="string">'your/assert/path'</span>)</div><div class="line">        .pipe([plugin]())</div><div class="line">        ...</div><div class="line">        .pipe(gulp.dest(<span class="string">'dist/path'</span>))</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<ul>
+<li>终端执行</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gulp sth</div></pre></td></tr></table></figure>
+<p><em>ps:<a href="https://www.gulpjs.com.cn/" target="_blank" rel="external">gulp文档</a></em></p>
+<h4 id="2-gulp实现"><a href="#2-gulp实现" class="headerlink" title="2.gulp实现"></a>2.gulp实现</h4><ul>
+<li>安装插件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># 压缩css,js,html,image</div><div class="line">$ npm install --save-dev gulp-minify-css gulp-uglify gulp-imagemin gulp-htmlmin gulp-rename gulp-cache gulp-concat</div></pre></td></tr></table></figure>
+<ul>
+<li>gulpfile.js</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>)</div><div class="line"></div><div class="line"><span class="comment">// 引入 gulp及组件</span></div><div class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>),</div><div class="line">    autoprefixer = <span class="built_in">require</span>(<span class="string">'gulp-autoprefixer'</span>),</div><div class="line">    minifycss = <span class="built_in">require</span>(<span class="string">'gulp-minify-css'</span>),        <span class="comment">//压缩css</span></div><div class="line">    uglify = <span class="built_in">require</span>(<span class="string">'gulp-uglify'</span>),            <span class="comment">//压缩JS</span></div><div class="line">    imagemin = <span class="built_in">require</span>(<span class="string">'gulp-imagemin'</span>),        <span class="comment">//压缩图片</span></div><div class="line">    rename = <span class="built_in">require</span>(<span class="string">'gulp-rename'</span>),            <span class="comment">//合并js文件</span></div><div class="line">    concat = <span class="built_in">require</span>(<span class="string">'gulp-concat'</span>),</div><div class="line">    cache = <span class="built_in">require</span>(<span class="string">'gulp-cache'</span>),</div><div class="line">    htmlmin = <span class="built_in">require</span>(<span class="string">'gulp-htmlmin'</span>),</div><div class="line">    del = <span class="built_in">require</span>(<span class="string">'del'</span>);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'html'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> options = &#123;</div><div class="line">        removeComments: <span class="literal">true</span>,<span class="comment">//清除HTML注释</span></div><div class="line">        collapseWhitespace: <span class="literal">true</span>,<span class="comment">//压缩HTML</span></div><div class="line">        collapseBooleanAttributes: <span class="literal">true</span>,<span class="comment">//省略布尔属性的值 &lt;input checked="true"/&gt; ==&gt; &lt;input /&gt;</span></div><div class="line">        removeEmptyAttributes: <span class="literal">true</span>,<span class="comment">//删除所有空格作属性值 &lt;input id="" /&gt; ==&gt; &lt;input /&gt;</span></div><div class="line">        removeScriptTypeAttributes: <span class="literal">true</span>,<span class="comment">//删除&lt;script&gt;的type="text/javascript"</span></div><div class="line">        removeStyleLinkTypeAttributes: <span class="literal">true</span>,<span class="comment">//删除&lt;style&gt;和&lt;link&gt;的type="text/css"</span></div><div class="line">        minifyJS: <span class="literal">true</span>,<span class="comment">//压缩页面JS</span></div><div class="line">        minifyCSS: <span class="literal">true</span><span class="comment">//压缩页面CSS</span></div><div class="line">    &#125;;</div><div class="line">    gulp.src(<span class="string">'./index-src.html'</span>)</div><div class="line">        .pipe(htmlmin(options))</div><div class="line">        .pipe(rename(<span class="string">'index.html'</span>))</div><div class="line">        .pipe(gulp.dest(<span class="string">'./'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// Styles</span></div><div class="line">gulp.task(<span class="string">'css'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> gulp.src(<span class="string">'./statics/css/*.css'</span>)</div><div class="line">        <span class="comment">// .pipe(rename(&#123; suffix: '.min' &#125;))</span></div><div class="line">        .pipe(minifycss())</div><div class="line">        .pipe(gulp.dest(<span class="string">'./dist/css'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// Scripts</span></div><div class="line">gulp.task(<span class="string">'js'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> gulp.src(<span class="string">'./statics/js/*.js'</span>)</div><div class="line">    .pipe(uglify())</div><div class="line">    .pipe(gulp.dest(<span class="string">'dist/js'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// Images</span></div><div class="line">gulp.task(<span class="string">'img'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> gulp.src([<span class="string">'./statics/img/*'</span>, <span class="string">'./statics/case_img/*'</span>])</div><div class="line">    .pipe(cache(imagemin(&#123; <span class="attr">optimizationLevel</span>: <span class="number">3</span>, <span class="attr">progressive</span>: <span class="literal">true</span>, <span class="attr">interlaced</span>: <span class="literal">true</span> &#125;)))</div><div class="line">    .pipe(gulp.dest(<span class="string">'dist/img'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// Clean  任务执行前，先清除之前生成的文件</span></div><div class="line">gulp.task(<span class="string">'clean'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">cb</span>) </span>&#123;</div><div class="line">    del([<span class="string">'dist/css'</span>, <span class="string">'dist/js'</span>, <span class="string">'dist/img'</span>], cb)</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// Default task  设置默认任务</span></div><div class="line">gulp.task(<span class="string">'default'</span>, [<span class="string">'clean'</span>, <span class="string">'css'</span>, <span class="string">'js'</span>, <span class="string">'img'</span>, <span class="string">'html'</span>], <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// gulp.start('css', 'js', 'img');</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>—-完—-</p>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2017</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+  </body>
+</html>
