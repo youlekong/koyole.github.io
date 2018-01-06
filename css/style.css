@@ -60,6 +60,12 @@ p {
   border: 1px solid #ddd;
   box-shadow: 0 0 2px #ddd;
 }
+.post .post-meta {
+  color: #bababa;
+}
+.post .post-meta .post-time {
+  color: #aaa;
+}
 @media screen and (max-width: 600px) {
   .post {
     margin: 1em auto;
@@ -93,6 +99,7 @@ p {
 }
 .posts .post-meta .post-time {
   float: right;
+  color: #aaa;
 }
 .archive {
   margin: 1em auto;
