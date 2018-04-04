@@ -46,19 +46,23 @@
     <main class="main">
       <article class="post">
   <div class="post-title">
-    <h2 class="title">php一些基础点</h2>
+    <h2 class="title">php一些基础知识</h2>
   </div>
   <div class="post-meta">
     <span class="post-time">2018-03-25</span>
   </div>
   <div class="post-content">
-    <p>使用php编程，在项目中遇到的一些问题</p>
+    <p>使用php编程，在项目中常见知识点</p>
 <a id="more"></a>
 <h3 id="一-PHP基本数据类型"><a href="#一-PHP基本数据类型" class="headerlink" title="一. PHP基本数据类型"></a>一. PHP基本数据类型</h3><blockquote>
 <p>Boolean 布尔类型，Integer 整型，Float 浮点型，String 字符串，Array 数组，Object 对象，Resource 资源类型，NULL，Callback / Callable，</p>
 </blockquote>
-<h3 id="二-魔术方法"><a href="#二-魔术方法" class="headerlink" title="二. 魔术方法"></a>二. 魔术方法</h3><blockquote>
-<p>__construct()， __destruct()， __call()， __callStatic()， __get()， __set()， __isset()， __unset()， __sleep()， __wakeup()， __toString()， __invoke()， __set<em>state()， \</em>_clone() 和 __debugInfo()</p>
+<h3 id="二-魔术常量和方法"><a href="#二-魔术常量和方法" class="headerlink" title="二. 魔术常量和方法"></a>二. 魔术常量和方法</h3><blockquote>
+<p>__LINE<strong>，__FILE</strong>， __DIR<strong>，__FUNCTION</strong>，__CLASS<strong>，__TRAIT</strong>，__METHOD<strong>，__NAMESPACE</strong></p>
+</blockquote>
+<p><br>    </p>
+<blockquote>
+<p>__construct()， __destruct()， __call()， __callStatic()， __get()， __set()， __isset()， __unset()， __sleep()， __wakeup()， __toString()， __invoke()， __set_state()， __clone() 和 __debugInfo()</p>
 </blockquote>
 <h3 id="三-超全局变量"><a href="#三-超全局变量" class="headerlink" title="三. 超全局变量"></a>三. 超全局变量</h3><blockquote>
 <p>$GLOBALS，$_SERVER，$_GET，$_POST，$_FILES，$_COOKIE，$_SESSION，$_REQUEST，$_ENV</p>
@@ -121,6 +125,7 @@
 <p>‘’, 0, 0.0, ‘0’, NULL, FALSE, array(), $var;</p>
 </blockquote>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 零或空</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="number">0</span>) );			<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="number">0.0</span>) );			<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="string">'0'</span>) );			<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="string">"0"</span>) );			<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="string">''</span>) );			<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="keyword">FALSE</span>) );		<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="keyword">NULL</span>) );		<span class="comment">// boolean true</span></div><div class="line">var_dump( <span class="keyword">empty</span>(<span class="keyword">array</span>()) );		<span class="comment">// boolean true</span></div><div class="line">$var;</div><div class="line">var_dump( <span class="keyword">empty</span>($val) );		<span class="comment">// boolean true</span></div></pre></td></tr></table></figure>
+<p>ps: <a href="http://php.net/manual/zh/index.php" target="_blank" rel="external">php中文手册</a></p>
 
   </div>
 </article>
