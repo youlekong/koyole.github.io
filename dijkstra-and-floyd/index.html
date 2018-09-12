@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="google-site-verification" content="v24WJQb0ZRnWSW9oNk49JVDx9SXCmZj3nOSAHggz1hM" />
+  <meta name="description" content="javascript | HTML5 | CSS3 | PHP | React | Vue">
+  <meta name="keywords" content="javascript, HTML5, CSS3, PHP, React, Vue">
+  <meta name="baidu-site-verification" content="sccUG6vhhH" />
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <style>
+    html, body {
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">dijkstra和floyd</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2018-09-12</span>
+  </div>
+  <div class="post-content">
+    <p>图的单源最短路径和多源最短路径</p>
+<a id="more"></a>
+<blockquote>
+<p>Dijkstra(迪杰斯特拉)算法是典型的单源最短路径算法，用于计算一个节点到其他所有节点的最短路径。<br>    主要特点是以起始点为中心向外层层扩展，直到扩展到终点为止。<br>    初始时，S(已求出最短路径的顶点)中只有起点s；U中是除s之外的顶点，并且U中顶点的路径是”起点s到该顶点的路径”。然后，从U中找出路径最短的顶点，并将其加入到S中；接着，更新U中的顶点和顶点对应的路径。 然后，再从U中找出路径最短的顶点，并将其加入到S中；接着，更新U中的顶点和顶点对应的路径。 … 重复该操作，直到遍历完所有顶点。</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">dijkstra</span>(<span class="params">data, source</span>) </span>&#123;</div><div class="line">    <span class="comment">// dist存放路径距离，path存放父顶点，visit存放访问过的顶点</span></div><div class="line">    <span class="keyword">var</span> dist = [], path = [], visit = [];   </div><div class="line">    <span class="keyword">var</span> len = data.length;</div><div class="line">    <span class="comment">// 初始化</span></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</div><div class="line">        dist[i] = data[source][i];  <span class="comment">// 源点到相邻顶点的权值</span></div><div class="line">        path[i] = source;</div><div class="line">        visit[i] = <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line">    dist[source] = <span class="number">0</span>;</div><div class="line">    visit[source] = <span class="literal">true</span>;</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt; len; i++) &#123;     <span class="comment">// 除去源点的各顶点</span></div><div class="line">        <span class="comment">// 寻找下个顶点到各顶点最小的路径；</span></div><div class="line">        <span class="keyword">var</span> min = &#123;<span class="attr">idx</span>: <span class="number">-1</span>, <span class="attr">weight</span>: <span class="literal">Infinity</span>&#125;;  <span class="comment">// 下标，权重</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="number">0</span>; j &lt; len; j++) &#123;</div><div class="line">            <span class="keyword">if</span> ( <span class="literal">false</span> === visit[j] &amp;&amp; dist[j] &lt; min.weight )</div><div class="line">                min = &#123;<span class="attr">idx</span>: j, <span class="attr">weight</span>: dist[j]&#125;;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        visit[ min.idx ] = <span class="literal">true</span>;</div><div class="line"></div><div class="line">        <span class="comment">// 更新dist</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> k = <span class="number">0</span>; k &lt; len; k++) &#123;</div><div class="line">            <span class="keyword">if</span> ( <span class="literal">false</span> ===  visit[k] </div><div class="line">                &amp;&amp; min.weight + data[min.idx][k] &lt; dist[k] ) &#123;</div><div class="line">                dist[k] = min.weight + data[min.idx][k];</div><div class="line">                path[k] = min.idx;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> [dist, path];</div><div class="line">&#125;</div><div class="line"><span class="keyword">var</span> data = [</div><div class="line">    [<span class="number">0</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="literal">Infinity</span>, <span class="number">6</span>],</div><div class="line">    [<span class="number">9</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="literal">Infinity</span>, <span class="literal">Infinity</span>],</div><div class="line">    [<span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="literal">Infinity</span>],</div><div class="line">    [<span class="literal">Infinity</span>, <span class="literal">Infinity</span>, <span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>],</div><div class="line">    [<span class="number">6</span>, <span class="literal">Infinity</span>, <span class="literal">Infinity</span>, <span class="number">1</span>, <span class="number">0</span>]</div><div class="line">];</div><div class="line"><span class="built_in">console</span>.log( dijkstra(data, <span class="number">1</span>) );</div></pre></td></tr></table></figure>
+<blockquote>
+<p>floyd求多源最短路径算法</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">floyd</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="comment">//初始化floyd算法的两个矩阵 </span></div><div class="line">    <span class="keyword">var</span> D = [], P = [];</div><div class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; data.length; i++)&#123;</div><div class="line">        D[i] = [];</div><div class="line">        P[i] = [];</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> j = <span class="number">0</span>; j &lt; data.length; j++)&#123;</div><div class="line">            D[i][j] = data[i][j];</div><div class="line">            P[i][j] = <span class="number">-1</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//k为中间点 </span></div><div class="line">    <span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; data.length; k++)&#123;</div><div class="line">        <span class="comment">//i为起点 </span></div><div class="line">        <span class="keyword">for</span>(i = <span class="number">0</span> ; i &lt; data.length; i++)&#123;</div><div class="line">            <span class="comment">//j为终点 </span></div><div class="line">            <span class="keyword">for</span>(j =<span class="number">0</span>; j &lt; data.length; j++)&#123;</div><div class="line">                <span class="keyword">if</span>( D[i][k] + D[k][j] &lt; D[i][j] )&#123;</div><div class="line">                    D[i][j] = D[i][k] + D[k][j];<span class="comment">//更新最小路径 </span></div><div class="line">                    P[i][j] = k;<span class="comment">//更新最小路径中间顶点 </span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="built_in">console</span>.log(D, P);</div><div class="line">&#125;</div><div class="line"><span class="comment">// floyd(data);</span></div><div class="line"><span class="comment">// 0 =&gt; [0, 5, 2, 7, 6]</span></div><div class="line"><span class="comment">// 1 =&gt; [5, 0, 3, 8, 9]</span></div><div class="line"><span class="comment">// 2 =&gt; [2, 3, 0, 5, 6]</span></div><div class="line"><span class="comment">// 3 =&gt; [7, 8, 5, 0, 1]</span></div><div class="line"><span class="comment">// 4 =&gt; [6, 9, 6, 1, 0]</span></div></pre></td></tr></table></figure>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2018</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-112017168-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)}
+    gtag('js', new Date());
+    gtag('config', 'UA-112017168-1');
+</script>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "https://hm.baidu.com/hm.js?79947b6af0dc16bd0e5cab5df00cde71";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  </body>
+</html>
