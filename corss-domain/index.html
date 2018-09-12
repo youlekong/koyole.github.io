@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="google-site-verification" content="v24WJQb0ZRnWSW9oNk49JVDx9SXCmZj3nOSAHggz1hM" />
+  <meta name="description" content="javascript | HTML5 | CSS3 | PHP | React | Vue">
+  <meta name="keywords" content="javascript, HTML5, CSS3, PHP, React, Vue">
+  <meta name="baidu-site-verification" content="sccUG6vhhH" />
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <style>
+    html, body {
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">前后端跨域</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2018-09-12</span>
+  </div>
+  <div class="post-content">
+    <p>通过jsonp和cors实现前端跨域，及需要php的设置</p>
+<a id="more"></a>
+<blockquote>
+<p>为提高浏览器的安全性，防止xss和csrf攻击，浏览器从一个域名的网页去请求另一个域名的资源时，域名或子域名、端口、协议任一不同，都是跨域。</p>
+</blockquote>
+<h3 id="1-jsonp"><a href="#1-jsonp" class="headerlink" title="1.jsonp"></a>1.jsonp</h3><blockquote>
+<p>由于页面中带有src标签不受同源策略的限制，所以可以通过动态的创建script便签实现跨域情况下的前后端通信。但由于js文件是通过http协议下的get方法加载，因而这种方式应对get请求。</p>
+</blockquote>
+<ul>
+<li>php直接输出变量，前端页面直接获取变量</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">indexFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    $data = json_encode([<span class="string">'j'</span> =&gt; <span class="string">'js'</span>]);</div><div class="line">    <span class="keyword">echo</span> <span class="string">"var res = &#123;$data&#125;"</span>;</div><div class="line">    <span class="keyword">exit</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;script src=<span class="string">'http://wx.test.com/index/api/index'</span>&gt;&lt;/script&gt;</div><div class="line">&lt;script&gt;</div><div class="line">	<span class="built_in">console</span>.log(res);	<span class="comment">// &#123;j: "js"&#125;</span></div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>php输出方法，前端实现方法，传入callback参数</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">indexFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="keyword">if</span> ( array_key_exists(<span class="string">'callback'</span>, $_GET) ) &#123;</div><div class="line">        $data = json_encode([<span class="string">'jcb'</span> =&gt; <span class="string">'jscb'</span>]);</div><div class="line">        <span class="keyword">echo</span> $_GET[<span class="string">'callback'</span>] . <span class="string">'('</span> . $data . <span class="string">')'</span>;</div><div class="line">        <span class="keyword">exit</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        $data = json_encode([<span class="string">'j'</span> =&gt; <span class="string">'js'</span>]);</div><div class="line">        <span class="keyword">echo</span> <span class="string">"var res = &#123;$data&#125;"</span>;</div><div class="line">        <span class="keyword">exit</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;</div><div class="line">	<span class="function"><span class="keyword">function</span> <span class="title">callback</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(res);	<span class="comment">// &#123;jcb: "jscb"&#125;</span></div><div class="line">    &#125;</div><div class="line">&lt;<span class="regexp">/script&gt;</span></div><div class="line"><span class="regexp">&lt;script src='http:/</span><span class="regexp">/wx.test.com/i</span>ndex/api/index?callback=callback<span class="string">'&gt;&lt;/script&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>php输出方法，使用jquery的getJSON方法实现</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">jsonpFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    $cb = $_GET[<span class="string">'callback'</span>];</div><div class="line"></div><div class="line">    $data = [<span class="string">'c'</span> =&gt; <span class="string">'callback'</span>];</div><div class="line">    <span class="keyword">echo</span> $cb . <span class="string">'('</span> . \json_encode($data) . <span class="string">')'</span>;</div><div class="line">    <span class="keyword">exit</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;script&gt;</div><div class="line">	$.getJSON(<span class="string">'http://wx.test.com/index/api/jsonp?callback=?'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(res);	<span class="comment">// &#123;c: 'callback'&#125;</span></div><div class="line">    &#125;)</div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="2-cors"><a href="#2-cors" class="headerlink" title="2.cors"></a>2.cors</h3><blockquote>
+<p>跨源资源共享标准通过新增一系列 HTTP 头，让服务器能声明哪些来源可以通过浏览器访问该服务器上的资源。</p>
+</blockquote>
+<ul>
+<li>不带cookie的get方法，且不限制域名</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	header(<span class="string">"Access-Control-Allow-Credentials: true"</span>);</div><div class="line">	header(<span class="string">"Access-Control-Allow-Origin: *"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">corsGetFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;   </div><div class="line">    $data = [<span class="string">'g'</span> =&gt; <span class="string">'get'</span>];</div><div class="line">    <span class="keyword">echo</span> \json_encode($data);</div><div class="line">    <span class="keyword">exit</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$.getJSON(<span class="string">'http://wx.test.com/index/api/corsGet'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(res);	<span class="comment">// &#123;g: 'get'&#125;</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<ul>
+<li>不带cookie的post方法，且不限制域名</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	header(<span class="string">"Access-Control-Allow-Credentials: true"</span>);</div><div class="line">	header(<span class="string">"Access-Control-Allow-Origin: *"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">corsPostFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;   </div><div class="line">    $data = [<span class="string">'p'</span> =&gt; <span class="string">'post'</span>];</div><div class="line">    <span class="keyword">echo</span> \json_encode($data);</div><div class="line">    <span class="keyword">exit</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$.post(<span class="string">'http://wx.test.com/index/api/corsPost'</span>, &#123;&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(res);	<span class="comment">// &#123;p: 'post'&#125;</span></div><div class="line">&#125;, <span class="string">'json'</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>允许带cookie的get，post方法</li>
+</ul>
+<blockquote>
+<p>在cors实现跨域是，当需要前后端需要cookie时，需要前后端分别设置设置<em>header(“Access-Control-Allow-Credentials: true”);</em>， <em>withCredentials: true</em>。</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	header(<span class="string">"Access-Control-Allow-Credentials: true"</span>);</div><div class="line">    $last_host = $_SERVER[<span class="string">'HTTP_REFERER'</span>];</div><div class="line">    <span class="keyword">if</span> ($last_host[<span class="number">4</span>] == <span class="string">'s'</span>) &#123;</div><div class="line">        preg_match(<span class="string">"/^(https:\/\/)?([^\/]+)/i"</span>, $last_host, $matches);</div><div class="line">        header(<span class="string">"Access-Control-Allow-Origin: https://&#123;$matches[2]&#125;"</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        preg_match(<span class="string">"/^(http:\/\/)?([^\/]+)/i"</span>, $last_host, $matches);</div><div class="line">        header(<span class="string">"Access-Control-Allow-Origin: http://&#123;$matches[2]&#125;"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">corsGetFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;   </div><div class="line">    setcookie(<span class="string">'name_get'</span>, <span class="string">'yole_get'</span>, time() + <span class="number">60</span> * <span class="number">60</span>);</div><div class="line"></div><div class="line">    $data = [<span class="string">'g'</span> =&gt; <span class="string">'get'</span>];</div><div class="line">    <span class="keyword">echo</span> \json_encode($data);</div><div class="line">    <span class="keyword">exit</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">corsPostFunc</span><span class="params">()</span> </span></div><div class="line"><span class="function"></span>&#123;   </div><div class="line">    setcookie(<span class="string">'name_post'</span>, <span class="string">'yole_post'</span>, time() + <span class="number">60</span> * <span class="number">60</span>);</div><div class="line"></div><div class="line">    $data = [<span class="string">'p'</span> =&gt; <span class="string">'post'</span>];</div><div class="line">    <span class="keyword">echo</span> \json_encode($data);</div><div class="line">    <span class="keyword">exit</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">    type: <span class="string">'get'</span>,</div><div class="line">    url: <span class="string">'http://wx.test.com/index/api/corsGet'</span>,</div><div class="line">    xhrFields: &#123;</div><div class="line">        withCredentials: <span class="literal">true</span>,</div><div class="line">    &#125;,</div><div class="line">    corssDomain: <span class="literal">true</span>,</div><div class="line">    data: &#123;&#125;,</div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">    success: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(res);</div><div class="line">    &#125;</div><div class="line">&#125;)</div><div class="line"></div><div class="line">$.ajax(&#123;</div><div class="line">    type: <span class="string">'post'</span>,</div><div class="line">    url: <span class="string">'http://wx.test.com/index/api/corsPost'</span>,</div><div class="line">    xhrFields: &#123;</div><div class="line">        withCredentials: <span class="literal">true</span>,</div><div class="line">    &#125;,</div><div class="line">    corssDomain: <span class="literal">true</span>,</div><div class="line">    data: &#123;&#125;,</div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">    success: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(res);</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>— end —</p>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2018</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-112017168-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)}
+    gtag('js', new Date());
+    gtag('config', 'UA-112017168-1');
+</script>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "https://hm.baidu.com/hm.js?79947b6af0dc16bd0e5cab5df00cde71";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  </body>
+</html>
