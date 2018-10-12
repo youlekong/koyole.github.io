@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="google-site-verification" content="v24WJQb0ZRnWSW9oNk49JVDx9SXCmZj3nOSAHggz1hM" />
+  <meta name="description" content="javascript | HTML5 | CSS3 | PHP | React | Vue">
+  <meta name="keywords" content="javascript, HTML5, CSS3, PHP, React, Vue">
+  <meta name="baidu-site-verification" content="sccUG6vhhH" />
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <style>
+    html, body {
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">Javascript Source Map的简单实践</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2018-10-12</span>
+  </div>
+  <div class="post-content">
+    <p>分别使用gulp和webpack实践javascript source map</p>
+<a id="more"></a>
+<h3 id="1-什么是source-map"><a href="#1-什么是source-map" class="headerlink" title="1.什么是source map"></a>1.什么是source map</h3><blockquote>
+<p>source map是一个信息文件，里面储存着位置信息。压缩后的代码执行过程中发生错误时，可以通过source map定位错误位置，对线上的项目排错十分有用。</p>
+</blockquote>
+<h3 id="2-生成source-map"><a href="#2-生成source-map" class="headerlink" title="2.生成source map"></a>2.生成source map</h3><p>分别使用gulp和webpack生成javascript source map</p>
+<h4 id="1-gulp"><a href="#1-gulp" class="headerlink" title="1.gulp"></a>1.gulp</h4><ul>
+<li>通过node脚本添加依赖包</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ npm init</div><div class="line">$ npm install --save-dev gulp</div><div class="line">$ npm install --save-dev gulp-uglify gulp-sourcemaps gulp-util</div><div class="line">$ touch gulpfile.js</div></pre></td></tr></table></figure>
+<ul>
+<li>gulp配置文件</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> gulp = <span class="built_in">require</span>(<span class="string">'gulp'</span>);</div><div class="line"><span class="keyword">var</span> uglify = <span class="built_in">require</span>(<span class="string">'gulp-uglify'</span>);</div><div class="line"><span class="keyword">var</span> gutil = <span class="built_in">require</span>(<span class="string">'gulp-util'</span>);</div><div class="line"><span class="keyword">var</span> gsourcemaps = <span class="built_in">require</span>(<span class="string">'gulp-sourcemaps'</span>);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'build-sourcemap'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	gulp.src(<span class="string">'./src/index.js'</span>)</div><div class="line">		.pipe(gsourcemaps.init())</div><div class="line">		.pipe(uglify())</div><div class="line">		.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</div><div class="line">            gutil.log(gutil.colors.red(<span class="string">'[Error]'</span>), err.toString());</div><div class="line">        &#125;)</div><div class="line">        .pipe(gsourcemaps.write(<span class="string">'./'</span>))</div><div class="line">		.pipe(gulp.dest(<span class="string">'./dist'</span>));</div><div class="line">&#125;);</div><div class="line"></div><div class="line">gulp.task(<span class="string">'build'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">	gulp.src(<span class="string">'./src/index.js'</span>)</div><div class="line">		.pipe(uglify())</div><div class="line">		.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</div><div class="line">            gutil.log(gutil.colors.red(<span class="string">'[Error]'</span>), err.toString());</div><div class="line">        &#125;)</div><div class="line">		.pipe(gulp.dest(<span class="string">'./dist'</span>));</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<ul>
+<li>执行脚本命令</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 有sourcemap文件</span></div><div class="line">$ gulp build-sourcemap</div><div class="line"><span class="comment"># 无sourcemap文件</span></div><div class="line">$ gulp build</div></pre></td></tr></table></figure>
+<h4 id="2-webpack（version-gt-4-0）"><a href="#2-webpack（version-gt-4-0）" class="headerlink" title="2.webpack（version: &gt;= 4.0）"></a>2.webpack（version: &gt;= 4.0）</h4><ul>
+<li>通过node脚本添加依赖包</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ npm init</div><div class="line">$ npm install --save-dev webpack webpack-cli</div><div class="line">$ npm install --save-dev uglifyjs-webpack-plugin</div><div class="line">$ touch webpack.config.js</div><div class="line">$ touch webpack.map.config.js</div></pre></td></tr></table></figure>
+<ul>
+<li>webpack配置文件</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// webpack.config.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="keyword">const</span> UglifyJsPlugin = <span class="built_in">require</span>(<span class="string">'uglifyjs-webpack-plugin'</span>)</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">	<span class="comment">// mode: 'production',</span></div><div class="line">	<span class="comment">// mode: 'development',</span></div><div class="line">	mode: <span class="string">'none'</span>,</div><div class="line">	entry: [</div><div class="line">		<span class="string">'./src/index.js'</span></div><div class="line">	],</div><div class="line">	output: &#123;</div><div class="line">		path: path.resolve(__dirname, <span class="string">"dist"</span>),</div><div class="line">	&#125;,</div><div class="line">	plugins: [</div><div class="line">		<span class="keyword">new</span> UglifyJsPlugin(&#123;&#125;),</div><div class="line">	]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// webpack.map.config.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="keyword">const</span> UglifyJsPlugin = <span class="built_in">require</span>(<span class="string">'uglifyjs-webpack-plugin'</span>)</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">	<span class="comment">// mode: 'production',</span></div><div class="line">	<span class="comment">// mode: 'development',</span></div><div class="line">	mode: <span class="string">'none'</span>,</div><div class="line">	entry: [</div><div class="line">		<span class="string">'./src/index.js'</span></div><div class="line">	],</div><div class="line">	output: &#123;</div><div class="line">		path: path.resolve(__dirname, <span class="string">"dist"</span>),</div><div class="line">	&#125;,</div><div class="line">	devtool: <span class="string">"source-map"</span>, <span class="comment">// enum</span></div><div class="line">	plugins: [</div><div class="line">		<span class="keyword">new</span> UglifyJsPlugin(&#123;</div><div class="line">			sourceMap: <span class="literal">true</span></div><div class="line">		&#125;),</div><div class="line">	]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>package.json中添加执行脚本</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">"scripts": &#123;</div><div class="line">    "build": "webpack --config ./webpack.config.js",</div><div class="line">    "build-sourcemap": "webpack --config ./webpack.map.config.js"</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>执行脚本命令</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 有sourcemap文件</span></div><div class="line">$ webpack build-sourcemap</div><div class="line"><span class="comment"># 无sourcemap文件</span></div><div class="line">$ webpack build</div></pre></td></tr></table></figure>
+<h3 id="3-demo目录"><a href="#3-demo目录" class="headerlink" title="3.demo目录"></a>3.demo目录</h3><ul>
+<li>项目目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">$ tree source_map -L 3 -I node_modules</div><div class="line">source_map</div><div class="line">├── gulp_demo</div><div class="line">│   ├── dist</div><div class="line">│   │   ├── index.js</div><div class="line">│   │   └── index.js.map</div><div class="line">│   ├── gulpfile.js</div><div class="line">│   ├── package-lock.json</div><div class="line">│   ├── package.json</div><div class="line">│   └── src</div><div class="line">│       ├── index.css</div><div class="line">│       ├── index.html</div><div class="line">│       └── index.js</div><div class="line">└── webpack_demo</div><div class="line">    ├── dist</div><div class="line">    │   ├── main.js</div><div class="line">    │   └── main.js.map</div><div class="line">    ├── package-lock.json</div><div class="line">    ├── package.json</div><div class="line">    ├── src</div><div class="line">    │   ├── index.css</div><div class="line">    │   ├── index.html</div><div class="line">    │   └── index.js</div><div class="line">    ├── webpack.config.js</div><div class="line">    └── webpack.map.config.js</div></pre></td></tr></table></figure>
+<p><em>ps:</em><br>JavaScript Source Map 详解：<a href="http://www.ruanyifeng.com/blog/2013/01/javascript_source_map.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2013/01/javascript_source_map.html</a><br>Gulp文档：<a href="https://www.gulpjs.com.cn" target="_blank" rel="external">https://www.gulpjs.com.cn</a><br>Webpack文档：<a href="https://www.webpackjs.com/" target="_blank" rel="external">https://www.webpackjs.com/</a></p>
+<p>–end–</p>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2018</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-112017168-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)}
+    gtag('js', new Date());
+    gtag('config', 'UA-112017168-1');
+</script>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "https://hm.baidu.com/hm.js?79947b6af0dc16bd0e5cab5df00cde71";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  </body>
+</html>
