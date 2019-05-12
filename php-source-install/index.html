@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="google-site-verification" content="v24WJQb0ZRnWSW9oNk49JVDx9SXCmZj3nOSAHggz1hM" />
+  <meta name="description" content="javascript | HTML5 | CSS3 | PHP | React | Vue">
+  <meta name="keywords" content="javascript, HTML5, CSS3, PHP, React, Vue">
+  <meta name="baidu-site-verification" content="sccUG6vhhH" />
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <title>YOLE</title>
+  <style>
+    html, body {
+        color: #000;
+        font-family: "Times New Roman", Times, serif;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header class="header">
+  <div class="blog-title">
+    <a href="/" class="logo">YOLE</a>
+    <span class="subtitle">424188487@qq.com</span>
+  </div>
+  <nav class="navbar">
+    <ul class="menu">
+      
+        <li class="menu-item">
+          <a href="/" class="menu-item-link">Home</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="/archives" class="menu-item-link">Archives</a>
+        </li>
+      
+        <li class="menu-item">
+          <a href="https://github.com/youlekong" class="menu-item-link">Github</a>
+        </li>
+      
+    </ul>
+  </nav>
+</header>
+    <main class="main">
+      <article class="post">
+  <div class="post-title">
+    <h2 class="title">编译安装php</h2>
+  </div>
+  <div class="post-meta">
+    <span class="post-time">2019-05-12</span>
+  </div>
+  <div class="post-content">
+    <p>源码编译安装7.2.18，及编译安装php扩展<br>系统：Mac 10.12</p>
+<a id="more"></a>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Mac上自带php，不过由于php版本或不可定制等原因，需要自己安装php。可以通过brew安装php及php相关扩展，简单粗暴。当然也可以通过docker环境使用php。</p>
+<h3 id="1-安装php"><a href="#1-安装php" class="headerlink" title="1.安装php"></a>1.安装php</h3><p>进入<a href="https://www.php.net/，" target="_blank" rel="external">https://www.php.net/，</a> 选择对应版本，下载源码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 进入php源码目录</span></div><div class="line"><span class="built_in">cd</span> &lt;php&gt;/&lt;path&gt;/php-7.2.18 </div><div class="line"></div><div class="line"><span class="comment"># configure源码，</span></div><div class="line"><span class="comment"># --prefix：指定php安装目录，默认安装目录`/usr/local/`</span></div><div class="line"><span class="comment"># 通过./configure --help查看可配置参数</span></div><div class="line"><span class="comment"># --with-config-file-path： 指定php.ini文件位置，不指定则默认在/usr/local/lib目录下</span></div><div class="line"><span class="comment"># --enable-fpm：php7.2源码中包含php-fpm，指定参数后生成php-fpm</span></div><div class="line"><span class="comment"># --with-fpm-user=youkong --with-fpm-group=staff：指定用户及组，需要与nginx配置文件中的指定的用户及组相同</span></div><div class="line"><span class="comment"># --with-mysqli --with-pdo-mysql： 在编译时可以配置php的一些扩展，主要看项目中需求</span></div><div class="line">./configure --with-config-file-path=/usr/<span class="built_in">local</span>/etc/php/7.2 --<span class="built_in">enable</span>-fpm --with-fpm-user=youkong --with-fpm-group=staff --with-mysqli --with-pdo-mysql </div><div class="line"></div><div class="line"><span class="comment"># 默认路径下需要sudo权限</span></div><div class="line">sudo make clean</div><div class="line"></div><div class="line"><span class="comment"># 默认路径下需要sudo权限</span></div><div class="line">sudo make</div><div class="line"></div><div class="line"><span class="comment"># 默认路径下需要sudo权限</span></div><div class="line">sudo make install</div><div class="line"></div><div class="line"><span class="comment"># 查看php版本</span></div><div class="line">php -v</div><div class="line"></div><div class="line"><span class="comment"># 查看php扩展</span></div><div class="line">php -m</div></pre></td></tr></table></figure>
+<p>需要注意的是安装完成后，<code>php -v</code>在指定<code>--prefix</code>参数时，展示出来的信息不会是安装的php版本，需要添加环境变量，修改文件<code>vim ~/.bash_profile</code>，修改后需要<code>source ~/.bash_profile</code>生效。php-fpm同理。</p>
+<h3 id="2-安装redis扩展"><a href="#2-安装redis扩展" class="headerlink" title="2.安装redis扩展"></a>2.安装redis扩展</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># git clone</span></div><div class="line">git <span class="built_in">clone</span> https://github.com/phpredis/phpredis/tree/master</div><div class="line"><span class="built_in">cd</span> phpredis</div><div class="line"></div><div class="line"><span class="comment"># 源码中没有configure文件时，需要通过phpize生成</span></div><div class="line">phpize</div><div class="line"></div><div class="line">./configure [--<span class="built_in">enable</span>-redis-igbinary] [--<span class="built_in">enable</span>-redis-lzf [--with-liblzf[=DIR]]]</div><div class="line"></div><div class="line">sudo make</div><div class="line"></div><div class="line"><span class="comment"># make install 后会指定cp到php extensions目录</span></div><div class="line"><span class="comment"># 例如：/usr/local/lib/php/extensions/no-debug-non-zts-20170718/，生成redis.so文件</span></div><div class="line">sudo make install</div><div class="line"></div><div class="line"><span class="comment"># 配置php.ini文件，添加redis扩展</span></div><div class="line">vim php.ini</div><div class="line"></div><div class="line"><span class="comment"># 添加</span></div><div class="line"><span class="comment"># 需要注意的是在添加之前配置好extension_dir路径指定到扩展路径，extension_dir默认路径是/lib/php/pecl路径</span></div><div class="line"><span class="comment"># 例如：extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20170718</span></div><div class="line">extension=redis.so</div></pre></td></tr></table></figure>
+<h3 id="3-安装swoole扩展"><a href="#3-安装swoole扩展" class="headerlink" title="3.安装swoole扩展"></a>3.安装swoole扩展</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># git clone</span></div><div class="line">git <span class="built_in">clone</span> git@github.com:swoole/swoole-src.git</div><div class="line"><span class="built_in">cd</span> swoole-src</div><div class="line"></div><div class="line"><span class="comment"># 源码中没有configure文件时，需要通过phpize生成</span></div><div class="line">phpize</div><div class="line"></div><div class="line">./configure [--<span class="built_in">enable</span>-redis-igbinary] [--<span class="built_in">enable</span>-redis-lzf [--with-liblzf[=DIR]]]</div><div class="line"></div><div class="line">sudo make</div><div class="line"></div><div class="line"><span class="comment"># make install 后会指定cp到php extensions目录</span></div><div class="line"><span class="comment"># 例如：/usr/local/lib/php/extensions/no-debug-non-zts-20170718/，生成swoole.so文件</span></div><div class="line">sudo make install</div><div class="line"></div><div class="line"><span class="comment"># 配置php.ini文件，添加swoole扩展</span></div><div class="line">vim php.ini</div><div class="line"></div><div class="line"><span class="comment"># 添加</span></div><div class="line"><span class="comment"># 需要注意的是在添加之前配置好extension_dir路径指定到扩展路径，extension_dir默认路径是/lib/php/pecl路径</span></div><div class="line"><span class="comment"># 例如：extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20170718</span></div><div class="line">extension=swoole.so</div></pre></td></tr></table></figure>
+<h3 id="4-安装gd扩展"><a href="#4-安装gd扩展" class="headerlink" title="4.安装gd扩展"></a>4.安装gd扩展</h3><p>在实际项目开发中，需要安装php扩展。例如在登录页面需要生成验证码，需要php的gd扩展。不通与redis扩展，gd是php自带的扩展，可以在php编译安装时通过参数<code>--with-gd</code>指定，这样安装后的php带有gd扩展。如果在php已经完成安装后，安装gd扩展则需要编译gd扩展到php。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># php7.2.18目录下的ext目录是所有php默认扩展，在php编译是可通过`--with`指定，同php一同编译</span></div><div class="line"><span class="built_in">cd</span> php7.2.18/ext/gd</div><div class="line"></div><div class="line">phpize</div><div class="line"></div><div class="line">./configure --with-png-dir --with-freetype-dir --with-jpeg-dir --with-gd</div><div class="line"></div><div class="line">make</div><div class="line"></div><div class="line">make install</div><div class="line"></div><div class="line">vim php.ini</div><div class="line"></div><div class="line">extension=gd.so</div></pre></td></tr></table></figure>
+<p>–end–</p>
+
+  </div>
+</article>
+    </main>
+    <footer class='footer'>
+	<span>© 2016-2019</span>
+	<a href='https://hexo.io/zh-cn/'>hexo</a>
+</footer>
+
+<script src="/js/highlight.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-112017168-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)}
+    gtag('js', new Date());
+    gtag('config', 'UA-112017168-1');
+</script>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "https://hm.baidu.com/hm.js?79947b6af0dc16bd0e5cab5df00cde71";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  </body>
+</html>
